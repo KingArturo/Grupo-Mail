@@ -55,4 +55,10 @@ public class MailClient
         MailItem item = new MailItem(user, to, subject, message);
         server.post(item);
     }
+    
+    public int getNumberOfMessage()
+    {
+        int correos = server.howManyMailItems(user);
+        return correos;
+    }
 }
