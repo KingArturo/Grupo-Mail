@@ -28,12 +28,20 @@ public class MailClient
     public MailItem getNextMailItem()
     {
         MailItem item = server.getNextMailItem(user);
+        String cuerpoMensaje = item.getMessage();
+        String asuntoMensaje = item.getSubject();
         if(item == null) {
             item = server.getNextMailItem(user);
         }
         else {
             ultimoMensaje = item;
-
+            if (asuntoMensaje.contains(user)) {
+            }
+            else{
+                if (cuerpoMensaje.contains("viagra")||cuerpoMensaje.contains("loteria")){
+                    item = null;
+                }
+            }
         }
 
         return item;
@@ -46,13 +54,24 @@ public class MailClient
     public void printNextMailItem()
     {
         MailItem item = server.getNextMailItem(user);
+        String cuerpoMensaje = item.getMessage();
+        String asuntoMensaje = item.getSubject();
         if(item == null) {
             System.out.println("No new mail.");
         }
         else {
-            item.print();
             ultimoMensaje = item;
-
+            if (asuntoMensaje.contains(user)) {
+                item.print();
+            }
+            else{
+                if (cuerpoMensaje.contains("viagra")||cuerpoMensaje.contains("loteria")){
+                    System.out.println("Mensaje recibido de spam"); 
+                }
+                else {
+                    item.print();
+                }
+            }
         }
     }
 
