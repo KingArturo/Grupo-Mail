@@ -78,4 +78,18 @@ public class MailClient
     {
         ultimoMensaje.print();
     }
+
+    /**
+     * Responde automáticamente a un mensaje que le ha sido enviado.
+     */
+    public void receiveAndAutorespond()
+    {
+        MailItem item = server.getNextMailItem(user);
+        if(item != null) {
+            String reFrom = item.getFrom();
+            String reSubject = "RE: " + item.getSubject();
+            String reMessage = "Gracias por su mensaje. Le contestaré lo antes posible. " + item.getMessage();
+            sendMailItem(reFrom, reSubject, reMessage);
+        }
+    }
 }
