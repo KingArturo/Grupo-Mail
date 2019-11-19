@@ -11,7 +11,16 @@ public class MailClient
     private MailServer server;
     // The user running this client.
     private String user;
+
     private MailItem ultimoMensaje;
+
+    public int menRecibidos;
+
+    public int menEnviados;
+
+    public int caracteres;
+
+    public String maxUser;
 
     /**
      * Create a mail client run by user and attached to the given server.
@@ -20,6 +29,10 @@ public class MailClient
     {
         this.server = server;
         this.user = user;
+        menRecibidos = 0;
+        menEnviados = 0;
+        caracteres = 0;
+        maxUser = "";
     }
 
     /**
@@ -30,20 +43,29 @@ public class MailClient
         MailItem item = server.getNextMailItem(user);
         String cuerpoMensaje = item.getMessage();
         String asuntoMensaje = item.getSubject();
+        boolean esSpam = false;
         if(item == null) {
             item = server.getNextMailItem(user);
         }
         else {
             ultimoMensaje = item;
             if (asuntoMensaje.contains(user)) {
+                menRecibidos ++;
             }
             else{
                 if (cuerpoMensaje.contains("viagra")||cuerpoMensaje.contains("loteria")){
                     item = null;
+                    esSpam = true;
                 }
             }
+            if (item != null && item.getMessage().length() > caracteres && esSpam == false) {
+                int carac = item.getMessage().length();
+                String user = item.getFrom();
+                caracteres = carac;
+                maxUser = user;
+                menRecibidos ++;
+            }
         }
-
         return item;
     }
 
@@ -56,6 +78,7 @@ public class MailClient
         MailItem item = server.getNextMailItem(user);
         String cuerpoMensaje = item.getMessage();
         String asuntoMensaje = item.getSubject();
+        boolean esSpam = false;
         if(item == null) {
             System.out.println("No new mail.");
         }
@@ -63,14 +86,23 @@ public class MailClient
             ultimoMensaje = item;
             if (asuntoMensaje.contains(user)) {
                 item.print();
+                menRecibidos ++;
             }
             else{
                 if (cuerpoMensaje.contains("viagra")||cuerpoMensaje.contains("loteria")){
-                    System.out.println("Mensaje recibido de spam"); 
+                    System.out.println("Mensaje recibido de spam");
+                    esSpam = true;
                 }
                 else {
                     item.print();
+                    menRecibidos ++;
                 }
+            }
+            if (item.getMessage().length() > caracteres && esSpam == false) {
+                int carac = item.getMessage().length();
+                String user = item.getFrom();
+                caracteres = carac;
+                maxUser = user;
             }
         }
     }
@@ -110,5 +142,15 @@ public class MailClient
             String reMessage = "Gracias por su mensaje. Le contestaré lo antes posible. " + item.getMessage();
             sendMailItem(reFrom, reSubject, reMessage);
         }
+    }
+
+    /**
+     * Muestra por pantalla los mensajes recibidos, enviados, usuario y caracteres
+     * del mensaje mas largo 
+     */
+    public String getStatus () 
+    {
+        return "" + menRecibidos + "," + menEnviados + "," +
+        maxUser + "," + caracteres;
     }
 }
