@@ -41,11 +41,7 @@ public class MailClient
     public MailItem getNextMailItem()
     {
         MailItem item = server.getNextMailItem(user);
-        boolean esSpam = false;
-        if(item == null) {
-            item = server.getNextMailItem(user);
-        }
-        else {
+        if(item != null) {
             String cuerpoMensaje = item.getMessage();
             String asuntoMensaje = item.getSubject();
 
@@ -56,17 +52,16 @@ public class MailClient
             else{
                 if (cuerpoMensaje.contains("viagra")||cuerpoMensaje.contains("loteria")){
                     item = null;
-                    esSpam = true;
                     menRecibidos --;
                 }
             }
             if (item != null) {
-                if (item.getMessage().length() > caracteres && esSpam == false) {
+                if (item.getMessage().length() > caracteres) {
                     int carac = item.getMessage().length();
                     String user = item.getFrom();
                     caracteres = carac;
                     maxUser = user;
-                    
+
                 }
                 ultimoMensaje = item;
             }
@@ -88,7 +83,7 @@ public class MailClient
             System.out.println("No new mail.");
         }
         else {
-            
+
             if (asuntoMensaje.contains(user)) {
                 item.print();
                 menRecibidos ++;
