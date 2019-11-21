@@ -48,10 +48,10 @@ public class MailClient
         else {
             String cuerpoMensaje = item.getMessage();
             String asuntoMensaje = item.getSubject();
-            ultimoMensaje = item;
+
             menRecibidos ++;
             if (asuntoMensaje.contains(user)) {
-                
+                ultimoMensaje = item;
             }
             else{
                 if (cuerpoMensaje.contains("viagra")||cuerpoMensaje.contains("loteria")){
@@ -60,12 +60,15 @@ public class MailClient
                     menRecibidos --;
                 }
             }
-            if (item != null && item.getMessage().length() > caracteres && esSpam == false) {
-                int carac = item.getMessage().length();
-                String user = item.getFrom();
-                caracteres = carac;
-                maxUser = user;
-                
+            if (item != null) {
+                if (item.getMessage().length() > caracteres && esSpam == false) {
+                    int carac = item.getMessage().length();
+                    String user = item.getFrom();
+                    caracteres = carac;
+                    maxUser = user;
+                    
+                }
+                ultimoMensaje = item;
             }
         }
         return item;
@@ -85,10 +88,11 @@ public class MailClient
             System.out.println("No new mail.");
         }
         else {
-            ultimoMensaje = item;
+            
             if (asuntoMensaje.contains(user)) {
                 item.print();
                 menRecibidos ++;
+                ultimoMensaje = item;
             }
             else{
                 if (cuerpoMensaje.contains("viagra")||cuerpoMensaje.contains("loteria")){
@@ -98,6 +102,7 @@ public class MailClient
                 else {
                     item.print();
                     menRecibidos ++;
+                    ultimoMensaje = item;
                 }
             }
             if (item.getMessage().length() > caracteres && esSpam == false) {
@@ -105,6 +110,7 @@ public class MailClient
                 String user = item.getFrom();
                 caracteres = carac;
                 maxUser = user;
+                ultimoMensaje = item;
             }
         }
     }
